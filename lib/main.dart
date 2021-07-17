@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         title: TextField(
           controller: _searchTextController,
           decoration: InputDecoration(
-            hintText: 'Enter the search query',
+            hintText: 'Search Giphy',
             hintStyle: const TextStyle(
                 color: Colors.grey, fontStyle: FontStyle.italic),
             suffixIcon: IconButton(
