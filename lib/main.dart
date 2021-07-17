@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
@@ -54,6 +55,9 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
         title: TextField(
+          onSubmitted: (value) async {
+            _search(value);
+          },
           controller: _searchTextController,
           decoration: InputDecoration(
             hintText: 'Search Giphy',
@@ -61,14 +65,9 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.grey, fontStyle: FontStyle.italic),
             suffixIcon: IconButton(
               icon: const Icon(Icons.search),
-              onPressed: () {
+              onPressed: () async {
                 FocusScope.of(context).unfocus();
-                final _query = _searchTextController.text.trim();
-                if (_query.isNotEmpty) {
-                  context
-                      .read(searchStateNotifierProvider.notifier)
-                      .search(_query);
-                }
+                _search(_searchTextController.text.trim());
               },
             ),
           ),
@@ -119,21 +118,13 @@ class _HomePageState extends State<HomePage> {
                         if (index >= gifList.gifs.length - 2) {
                           context
                               .read(searchStateNotifierProvider.notifier)
-                              .loadMore(_searchTextController.text.trim());
-                          return ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(32)),
-                            child: Shimmer(
-                                color: Colors.white,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(32)),
-                                )),
-                          );
+                              .loadMore();
+                          return const ShimmerPlaceholder();
                         }
-                        return Image.network(
-                          gifList.gifs[index].url,
+                        return CachedNetworkImage(
+                          imageUrl: gifList.gifs[index].url,
+                          placeholder: (context, _) =>
+                              const ShimmerPlaceholder(),
                           fit: BoxFit.cover,
                         );
                       });
@@ -145,6 +136,31 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  void _search(String value) async {
+    final _query = value.trim();
+    if (_query.isNotEmpty) {
+      await context.read(searchStateNotifierProvider.notifier).search(_query);
+    }
+  }
+}
+
+class ShimmerPlaceholder extends StatelessWidget {
+  const ShimmerPlaceholder({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(32)),
+      child: Shimmer(
+          color: Colors.white,
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(32)),
+          )),
     );
   }
 }

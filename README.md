@@ -9,6 +9,7 @@ Libraries used:
 - flutter_riverpod for state management and dependency injection
 - shimmer_animation for loading animation of an individual GIF
 - dio as the http client
+- cached_network_image for convenience
 - freezed for generating boilerplate code for immutable classes
 - build_runner for running code generation scripts
 - very_good_analysis for static code analysis

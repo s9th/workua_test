@@ -22,9 +22,11 @@ class SearchStateNotifier extends StateNotifier<SearchState> {
         super(SearchState.initial());
 
   final ISearchRepositry _repository;
+  String _query = '';
 
   Future<void> search(String query) async {
     state = SearchState.loading();
+    _query = query;
     final _gifList = await _repository.loadSearchResults(query: query);
     _gifList.when(
       success: (results) {
@@ -40,11 +42,11 @@ class SearchStateNotifier extends StateNotifier<SearchState> {
     );
   }
 
-  Future<void> loadMore(String query) async {
+  Future<void> loadMore() async {
     await state.maybeWhen(loaded: (gifList) async {
       if (gifList.totalCount - gifList.offset >= gifList.count) {
         final _addedGifList = await _repository.loadSearchResults(
-            query: query, offset: gifList.offset + gifList.count);
+            query: _query, offset: gifList.offset + gifList.count);
         _addedGifList.when(
           success: (results) {
             if ((results as GifList).gifs.isNotEmpty) {
@@ -63,8 +65,8 @@ class SearchStateNotifier extends StateNotifier<SearchState> {
           },
         );
       }
-    }, orElse: () async {
-      await search(query);
+    }, orElse: () {
+      return;
     });
   }
 }
