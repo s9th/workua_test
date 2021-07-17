@@ -152,15 +152,13 @@ class ShimmerPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(32)),
-      child: Shimmer(
-          color: Colors.white,
-          child: Container(
-            decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(32)),
-          )),
+    return Shimmer(
+      color: Colors.white,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+        ),
+      ),
     );
   }
 }
