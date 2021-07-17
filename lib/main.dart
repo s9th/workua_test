@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:workua_test/state/search_state.dart';
 
 void main() {
@@ -42,8 +43,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _searchTextController.dispose();
     super.dispose();
+    _searchTextController.dispose();
   }
 
   @override
@@ -85,42 +86,62 @@ class _HomePageState extends State<HomePage> {
             orElse: () {},
           );
         },
-        child: Consumer(
-          builder: (context, watch, child) {
-            final state = watch(searchStateNotifierProvider);
-
-            return state.maybeWhen(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              empty: () => const Center(
-                child: Text('Nothing was found. Try changing your query'),
-              ),
-              loaded: (gifList) {
-                oldLength = gifList.gifs.length;
-
-                return GridView.builder(
-                    // itemCount: gifList.gifs.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: MediaQuery.of(context).orientation ==
-                              Orientation.portrait
-                          ? 2
-                          : 3,
-                      childAspectRatio: 1.6,
-                      crossAxisSpacing: 2,
-                      mainAxisSpacing: 2,
-                    ),
-                    itemBuilder: (context, index) {
-                      if (index >= gifList.gifs.length) {
-                        context
-                            .read(searchStateNotifierProvider.notifier)
-                            .loadMore(_searchTextController.text.trim());
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return Image.network(gifList.gifs[index].url);
-                    });
-              },
-              orElse: () => const SizedBox(),
-            );
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await context
+                .read(searchStateNotifierProvider.notifier)
+                .search(_searchTextController.text.trim());
           },
+          child: Consumer(
+            builder: (context, watch, child) {
+              final state = watch(searchStateNotifierProvider);
+
+              return state.maybeWhen(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                empty: () => const Center(
+                  child: Text('Nothing was found. Try changing your query'),
+                ),
+                loaded: (gifList) {
+                  oldLength = gifList.gifs.length;
+
+                  return GridView.builder(
+                      itemCount: gifList.gifs.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? 2
+                            : 3,
+                        childAspectRatio: 1.5,
+                        crossAxisSpacing: 2,
+                        mainAxisSpacing: 2,
+                      ),
+                      itemBuilder: (context, index) {
+                        if (index >= gifList.gifs.length - 2) {
+                          context
+                              .read(searchStateNotifierProvider.notifier)
+                              .loadMore(_searchTextController.text.trim());
+                          return ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(32)),
+                            child: Shimmer(
+                                color: Colors.white,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(32)),
+                                )),
+                          );
+                        }
+                        return Image.network(
+                          gifList.gifs[index].url,
+                          fit: BoxFit.cover,
+                        );
+                      });
+                },
+                orElse: () => const SizedBox(),
+              );
+            },
+          ),
         ),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
