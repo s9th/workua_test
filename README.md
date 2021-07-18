@@ -11,6 +11,7 @@ Libraries used:
 - dio as the http client
 - cached_network_image for convenience
 - freezed for generating boilerplate code for immutable classes
+- mockito for mocking dependencies in unit tests
 - build_runner for running code generation scripts
 - very_good_analysis for static code analysis
 

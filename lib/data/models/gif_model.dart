@@ -25,9 +25,9 @@ class GifList with _$GifList {
   factory GifList.fromJson(Map<String, dynamic> map) {
     final _result = GifList(
         gifs: (map['data'] as List).map((gif) => Gif.fromJson(gif)).toList(),
-        offset: (map['pagination'] as Map)['offset'],
-        count: (map['pagination'] as Map)['count'],
-        totalCount: (map['pagination'] as Map)['total_count']);
+        offset: (map['pagination'] as Map)['offset'] ?? 0,
+        count: (map['pagination'] as Map)['count'] ?? 0,
+        totalCount: (map['pagination'] as Map)['total_count'] ?? 0);
     return _result;
   }
 }

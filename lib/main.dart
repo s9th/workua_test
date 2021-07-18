@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:workua_test/state/search_state.dart';
+import 'package:workua_test/ui/shimmer_placeholder.dart';
 
 void main() {
   runApp(const ProviderScope(child: GiphySearchApp()));
@@ -35,7 +35,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _searchTextController = TextEditingController();
-  int oldLength = 0;
 
   @override
   void initState() {
@@ -101,8 +100,6 @@ class _HomePageState extends State<HomePage> {
                   child: Text('Nothing was found. Try changing your query'),
                 ),
                 loaded: (gifList) {
-                  oldLength = gifList.gifs.length;
-
                   return GridView.builder(
                       itemCount: gifList.gifs.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -144,21 +141,5 @@ class _HomePageState extends State<HomePage> {
     if (_query.isNotEmpty) {
       await context.read(searchStateNotifierProvider.notifier).search(_query);
     }
-  }
-}
-
-class ShimmerPlaceholder extends StatelessWidget {
-  const ShimmerPlaceholder({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer(
-      color: Colors.white,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-        ),
-      ),
-    );
   }
 }
