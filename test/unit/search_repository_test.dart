@@ -34,6 +34,10 @@ void main() {
           ApiResult<dynamic>.success(
             data: GifList.fromJson(positiveResult),
           ));
+      verify(mockApiService.get('', queryParameters: {
+        'offset': 0,
+        'q': query,
+      })).called(1);
     });
     test('returns an error message in case of an exception', () async {
       const query = 'test';

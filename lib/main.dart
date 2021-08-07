@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
             hintStyle: const TextStyle(
                 color: Colors.grey, fontStyle: FontStyle.italic),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.access_alarms),
               onPressed: () async {
                 FocusScope.of(context).unfocus();
                 _search(_searchTextController.text.trim());
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: MediaQuery.of(context).orientation ==
                                 Orientation.portrait
-                            ? 2
+                            ? 4
                             : 3,
                         childAspectRatio: 1.5,
                         crossAxisSpacing: 2,
