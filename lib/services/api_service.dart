@@ -15,10 +15,12 @@ class ApiService {
     return options;
   }
 
-  Future<dynamic> get(String path,
-      {Map<String, dynamic>? queryParameters,
-      Map? data,
-      Function? errorCallback}) {
+  Future<dynamic> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Map? data,
+    Function? errorCallback,
+  }) {
     return request(
       path,
       method: 'get',
@@ -28,10 +30,12 @@ class ApiService {
     );
   }
 
-  Future<dynamic> post(String path,
-      {Map<String, dynamic>? queryParameters,
-      Map? data,
-      Function? errorCallback}) {
+  Future<dynamic> post(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Map? data,
+    Function? errorCallback,
+  }) {
     return request(
       path,
       method: 'post',
@@ -48,11 +52,13 @@ class ApiService {
     Map? data,
     Function? errorCallback,
   }) async {
-    final response = await _dio.request(path,
-        data: data,
-        options: Options(method: method),
-        queryParameters: (queryParameters ?? {})
-          ..putIfAbsent('api_key', () => '7qiN8opzNhetYLvxwntzF8lEFMeky8Yn'));
+    final response = await _dio.request(
+      path,
+      data: data,
+      options: Options(method: method),
+      queryParameters: (queryParameters ?? {})
+        ..putIfAbsent('api_key', () => '7qiN8opzNhetYLvxwntzF8lEFMeky8Yn'),
+    );
     return response.data;
   }
 }

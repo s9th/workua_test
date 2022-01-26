@@ -8,6 +8,7 @@ import 'package:workua_test/data/repositories/search_repository.dart';
 import 'package:workua_test/services/api_result.dart';
 
 import 'package:workua_test/services/api_service.dart';
+import 'package:workua_test/services/network_exceptions.dart';
 
 import 'search_repository_test.mocks.dart';
 
@@ -15,51 +16,61 @@ import 'search_repository_test.mocks.dart';
 void main() {
   final mockApiService = MockApiService();
   final container = ProviderContainer(
-      overrides: [apiServiceProvider.overrideWithValue(mockApiService)]);
+    overrides: [apiServiceProvider.overrideWithValue(mockApiService)],
+  );
+
+  const query = 'test';
+
+  final request = mockApiService.get(
+    '',
+    queryParameters: <String, dynamic>{'offset': 0, 'q': query},
+  );
 
   group('Search repository', () {
     test('executes a search and returns a result', () async {
-      const query = 'test';
       const positiveResult = {'data': [], 'pagination': {}};
 
-      when(mockApiService.get('', queryParameters: {
-        'offset': 0,
-        'q': query,
-      })).thenAnswer((_) async => positiveResult);
+      when(request).thenAnswer((_) async => positiveResult);
+
       final results = await container
           .read(searchRepositoryProvider)
           .loadSearchResults(query: query);
       expect(
-          results,
-          ApiResult<dynamic>.success(
-            data: GifList.fromJson(positiveResult),
-          ));
-      verify(mockApiService.get('', queryParameters: {
-        'offset': 0,
-        'q': query,
-      })).called(1);
+        results,
+        ApiResult<dynamic>.success(
+          data: GifList.fromJson(positiveResult),
+        ),
+      );
+      verify(
+        mockApiService.get(
+          '',
+          queryParameters: {
+            'offset': 0,
+            'q': query,
+          },
+        ),
+      ).called(1);
     });
     test('returns an error message in case of an exception', () async {
-      const query = 'test';
       final _apiError = DioError(
+        requestOptions: RequestOptions(path: '/foo'),
+        type: DioErrorType.response,
+        response: Response(
           requestOptions: RequestOptions(path: '/foo'),
-          type: DioErrorType.response,
-          response: Response(
-            requestOptions: RequestOptions(path: '/foo'),
-            statusCode: 400,
-          ));
-      when(mockApiService.get('', queryParameters: {
-        'offset': 0,
-        'q': query,
-      })).thenThrow(_apiError);
+          statusCode: 400,
+        ),
+      );
+
+      when(request).thenThrow(_apiError);
       final results = await container
           .read(searchRepositoryProvider)
           .loadSearchResults(query: query);
       expect(
-          results,
-          const ApiResult<dynamic>.failure(
-            error: 'Bad request',
-          ));
+        results,
+        const ApiResult<dynamic>.failure(
+          error: NetworkException.badRequest(),
+        ),
+      );
     });
   });
 }

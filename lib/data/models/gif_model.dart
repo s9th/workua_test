@@ -8,7 +8,7 @@ class Gif with _$Gif {
 
   factory Gif.fromJson(Map<String, dynamic> map) {
     return Gif(
-      url: ((map['images'] as Map)['preview_gif'] as Map)['url'],
+      url: ((map['images'] as Map)['preview_gif'] as Map)['url'] as String,
     );
   }
 }
@@ -24,10 +24,14 @@ class GifList with _$GifList {
 
   factory GifList.fromJson(Map<String, dynamic> map) {
     final _result = GifList(
-        gifs: (map['data'] as List).map((gif) => Gif.fromJson(gif)).toList(),
-        offset: (map['pagination'] as Map)['offset'] ?? 0,
-        count: (map['pagination'] as Map)['count'] ?? 0,
-        totalCount: (map['pagination'] as Map)['total_count'] ?? 0);
+      gifs: (map['data'] as List)
+          .map((e) => e as Map<String, dynamic>)
+          .map(Gif.fromJson)
+          .toList(),
+      offset: (map['pagination'] as Map)['offset'] ?? 0,
+      count: (map['pagination'] as Map)['count'] ?? 0,
+      totalCount: (map['pagination'] as Map)['total_count'] ?? 0,
+    );
     return _result;
   }
 }

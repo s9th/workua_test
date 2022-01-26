@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workua_test/data/models/gif_model.dart';
 import 'package:workua_test/services/api_result.dart';
 import 'package:workua_test/services/api_service.dart';
-import 'package:workua_test/services/network_exceptions.dart';
 
+// ignore: one_member_abstracts
 abstract class ISearchRepositry {
   Future<ApiResult> loadSearchResults({
     required String query,
@@ -21,14 +21,16 @@ class SearchRepository implements ISearchRepositry {
     int? offset,
   }) async {
     try {
-      final results = await _client.get('', queryParameters: {
-        'offset': offset ?? 0,
-        'q': query,
-      });
+      final results = await _client.get(
+        '',
+        queryParameters: {
+          'offset': offset ?? 0,
+          'q': query,
+        },
+      );
       return ApiResult.success(data: GifList.fromJson(results));
     } catch (e) {
-      return ApiResult.failure(
-          error: NetworkException.getException(e).errorMessage);
+      return ApiResult.fromError(e);
     }
   }
 }

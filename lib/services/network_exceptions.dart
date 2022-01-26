@@ -110,45 +110,23 @@ class NetworkException with _$NetworkException {
     }
   }
 
-  String get errorMessage {
-    var errorMessage = '';
-
-    when(notImplemented: () {
-      errorMessage = 'Not Implemented';
-    }, requestCancelled: () {
-      errorMessage = 'Request Cancelled';
-    }, internalServerError: () {
-      errorMessage = 'Internal Server Error';
-    }, notFound: (String reason) {
-      errorMessage = reason;
-    }, serviceUnavailable: () {
-      errorMessage = 'Service unavailable';
-    }, methodNotAllowed: () {
-      errorMessage = 'Method not allowed';
-    }, badRequest: () {
-      errorMessage = 'Bad request';
-    }, unauthorisedRequest: () {
-      errorMessage = 'Unauthorised request';
-    }, unexpectedError: () {
-      errorMessage = 'Unexpected error occurred';
-    }, requestTimeout: () {
-      errorMessage = 'Connection request timeout';
-    }, noInternetConnection: () {
-      errorMessage = 'No internet connection';
-    }, conflict: () {
-      errorMessage = 'Error due to a conflict';
-    }, sendTimeout: () {
-      errorMessage = 'Send timeout connnecting with API server';
-    }, unableToProcess: () {
-      errorMessage = 'Unable to process the data';
-    }, defaultError: (String error) {
-      errorMessage = error;
-    }, formatException: () {
-      errorMessage = 'Unexpected error occurred';
-    }, notAcceptable: () {
-      errorMessage = 'Not acceptable';
-    });
-
-    return errorMessage;
-  }
+  String get errorMessage => when(
+        notImplemented: () => 'Not Implemented',
+        requestCancelled: () => 'Request Cancelled',
+        internalServerError: () => 'Internal Server Error',
+        notFound: (String reason) => reason,
+        serviceUnavailable: () => 'Service unavailable',
+        methodNotAllowed: () => 'Method not allowed',
+        badRequest: () => 'Bad request',
+        unauthorisedRequest: () => 'Unauthorised request',
+        unexpectedError: () => 'Unexpected error occurred',
+        requestTimeout: () => 'Connection request timeout',
+        noInternetConnection: () => 'No internet connection',
+        conflict: () => 'Error due to a conflict',
+        sendTimeout: () => 'Send timeout connnecting with API server',
+        unableToProcess: () => 'Unable to process the data',
+        defaultError: (String error) => error,
+        formatException: () => 'Unexpected error occurred',
+        notAcceptable: () => 'Not acceptable',
+      );
 }
