@@ -89,6 +89,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               .read(searchControllerProvider.notifier)
               .search(_searchTextController.text.trim());
         },
+        // We don't really need this consumer because optimization is minimal
+        // but it ensures only search results are redrawn
         child: Consumer(
           builder: (context, watch, child) {
             final state = ref.watch(searchControllerProvider);
