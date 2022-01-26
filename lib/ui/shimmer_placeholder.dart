@@ -7,7 +7,6 @@ class ShimmerPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer(
-      color: Colors.white,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[100],
