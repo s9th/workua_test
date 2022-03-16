@@ -6,7 +6,6 @@ import 'package:mockito/mockito.dart';
 import 'package:workua_test/data/models/gif_model.dart';
 import 'package:workua_test/data/repositories/search_repository.dart';
 import 'package:workua_test/services/api_result.dart';
-
 import 'package:workua_test/services/api_service.dart';
 import 'package:workua_test/services/network_exceptions.dart';
 

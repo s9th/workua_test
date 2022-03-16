@@ -16,7 +16,7 @@ class Gif with _$Gif {
 @freezed
 class GifList with _$GifList {
   factory GifList({
-    required List<Gif> gifs,
+    required Iterable<Gif> gifs,
     required int count,
     required int offset,
     required int totalCount,

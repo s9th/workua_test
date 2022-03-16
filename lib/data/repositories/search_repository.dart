@@ -5,7 +5,7 @@ import 'package:workua_test/services/api_service.dart';
 
 // ignore: one_member_abstracts
 abstract class ISearchRepositry {
-  Future<ApiResult> loadSearchResults({
+  Future<ApiResult<GifList>> loadSearchResults({
     required String query,
     int? offset,
   });
@@ -16,7 +16,7 @@ class SearchRepository implements ISearchRepositry {
   final ApiService _client;
 
   @override
-  Future<ApiResult> loadSearchResults({
+  Future<ApiResult<GifList>> loadSearchResults({
     required String query,
     int? offset,
   }) async {

@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workua_test/controllers/search_controller.dart';
-import 'package:workua_test/controllers/search_state.dart';
+import 'package:workua_test/data/models/gif_model.dart';
 import 'package:workua_test/ui/shimmer_placeholder.dart';
 
 void main() {
@@ -50,11 +50,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<SearchState>(searchControllerProvider, (_, state) {
+    ref.listen<AsyncValue<GifList>>(searchControllerProvider, (_, state) {
       state.maybeWhen(
-        error: (message) {
+        error: (message, _) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
+            SnackBar(content: Text(message.toString())),
           );
         },
         orElse: () {},
@@ -91,46 +91,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         },
         // We don't really need this consumer because optimization is minimal
         // but it ensures only search results are redrawn
-        child: Consumer(
-          builder: (context, watch, child) {
-            final state = ref.watch(searchControllerProvider);
-
-            return state.maybeWhen(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              loaded: (gifList) {
-                if (gifList.gifs.isEmpty) {
-                  return const Center(
-                    child: Text('Nothing was found. Try changing your query'),
-                  );
-                }
-                return GridView.builder(
-                  itemCount: gifList.gifs.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: MediaQuery.of(context).orientation ==
-                            Orientation.portrait
-                        ? 4
-                        : 3,
-                    childAspectRatio: 1.5,
-                    crossAxisSpacing: 2,
-                    mainAxisSpacing: 2,
-                  ),
-                  itemBuilder: (context, index) {
-                    if (index >= gifList.gifs.length - 2) {
-                      ref.read(searchControllerProvider.notifier).loadMore();
-                      return const ShimmerPlaceholder();
-                    }
-                    return CachedNetworkImage(
-                      imageUrl: gifList.gifs[index].url,
-                      placeholder: (context, _) => const ShimmerPlaceholder(),
-                      fit: BoxFit.cover,
-                    );
-                  },
-                );
-              },
-              orElse: () => const SizedBox(),
-            );
-          },
-        ),
+        child: const GifGrid(),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -141,5 +102,51 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (_query.isNotEmpty) {
       ref.read(searchControllerProvider.notifier).search(_query);
     }
+  }
+}
+
+class GifGrid extends ConsumerWidget {
+  const GifGrid({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(searchControllerProvider);
+
+    return state.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      data: (gifList) {
+        if (gifList.gifs.isEmpty) {
+          return const Center(
+            child: Text('Nothing was found. Try changing your query'),
+          );
+        }
+        return GridView.builder(
+          itemCount: gifList.gifs.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:
+                MediaQuery.of(context).orientation == Orientation.portrait
+                    ? 4
+                    : 3,
+            childAspectRatio: 1.5,
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
+          ),
+          itemBuilder: (context, index) {
+            if (index >= gifList.gifs.length - 2) {
+              ref.read(searchControllerProvider.notifier).loadMore();
+              return const ShimmerPlaceholder();
+            }
+            return CachedNetworkImage(
+              imageUrl: gifList.gifs.elementAt(index).url,
+              placeholder: (context, _) => const ShimmerPlaceholder(),
+              fit: BoxFit.cover,
+            );
+          },
+        );
+      },
+      error: (error, _) => Center(child: Text(error.toString())),
+    );
   }
 }
