@@ -1,8 +1,8 @@
-# workua_test
+# workua_test - A simple test task for a job interview
 
 ## Getting Started
 
-Application is written using Flutter v. 2.3.0-24.1.pre (beta channel of flutter).
+Application is written using Flutter v. 2.10.3.
 
 Libraries used:
 
@@ -17,7 +17,6 @@ Libraries used:
 
 To run the project after cloning the repository run the following commands in terminal (provided flutter is already installed):
 
-- flutter channel beta
 - futter pub get
 - flutter pub run build_runner build
 - flutter run
