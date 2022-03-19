@@ -20,7 +20,7 @@ class SearchRepository implements ISearchRepositry {
     required String query,
     int? offset,
   }) async {
-    try {
+    return ApiResult.guard(() async {
       final results = await _client.get(
         '',
         queryParameters: {
@@ -28,10 +28,8 @@ class SearchRepository implements ISearchRepositry {
           'q': query,
         },
       );
-      return ApiResult.success(data: GifList.fromJson(results));
-    } catch (e) {
-      return ApiResult.fromError(e);
-    }
+      return GifList.fromJson(results);
+    });
   }
 }
 

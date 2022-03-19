@@ -10,8 +10,11 @@ class ApiResult<T> with _$ApiResult<T> {
   const factory ApiResult.failure({required NetworkException error}) =
       Failure<T>;
 
-  const ApiResult._();
-
-  factory ApiResult.fromError(Object e) =>
-      ApiResult.failure(error: NetworkException.getException(e));
+  static Future<ApiResult<T>> guard<T>(Future<T> Function() future) async {
+    try {
+      return ApiResult.success(data: await future());
+    } catch (e) {
+      return ApiResult.failure(error: NetworkException.getException(e));
+    }
+  }
 }
